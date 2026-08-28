@@ -1,7 +1,8 @@
 # custom postgresql container image, fit for synth.download's requirement
 # based on the pgroonga image, with pg_repack inject
 
-FROM groonga/pgroonga:latest-alpine-18 # pgroonga base
+# pgroonga base
+FROM groonga/pgroonga:latest-alpine-18
 
 # pg_repack installation yoinked from https://github.com/cherts/pg_repack_docker/blob/main/18/Dockerfile
 ENV PG_REPACK_VERSION=1.5.3
