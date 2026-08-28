@@ -1,15 +1,16 @@
 # custom postgresql container image, fit for synth.download's requirement
 # based on the pgroonga image, with pg_repack inject
 
-FROM groonga/pgroonga:latest-alpine-18
+FROM groonga/pgroonga:latest-alpine-18 # pgroonga base
 
-ENV DOCKER_PG_LLVM_DEPS="llvm21-dev clang21"
+# pg_repack installation yoinked from https://github.com/cherts/pg_repack_docker/blob/main/18/Dockerfile
 ENV PG_REPACK_VERSION=1.5.3
 
 RUN set -eux; \
 	apk add --no-cache --virtual .build-deps \
-		$DOCKER_PG_LLVM_DEPS \
-		bison \
+	    llvm21-dev \
+        clang21 \
+        bison \
 		coreutils \
 		dpkg-dev dpkg \
 		flex \
@@ -42,8 +43,7 @@ RUN set -eux; \
 	wget -O pg_repack.zip http://api.pgxn.org/dist/pg_repack/${PG_REPACK_VERSION}/pg_repack-${PG_REPACK_VERSION}.zip \
 	&& unzip pg_repack.zip || true && rm -f pg_repack.zip \
 	&& cd pg_repack-${PG_REPACK_VERSION} \
-	&& make \
-	&& make install; \
+	&& make && make install; \
 	apk del --no-network .build-deps; \
 	cd /; \
 	rm -rf \
@@ -51,5 +51,4 @@ RUN set -eux; \
 		/usr/local/share/doc \
 		/usr/local/share/man \
 	; \
-	\
 	pg_repack --version
