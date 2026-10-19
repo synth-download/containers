@@ -1,5 +1,6 @@
 {
   "projects": {
-    "postgresql-18": {}
+    "postgresql-18": {},
+    "caddy": {}
   }
 }
