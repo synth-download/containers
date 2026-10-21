@@ -1,6 +1,12 @@
 {
   "projects": {
-    "postgresql-18": {},
-    "caddy": {}
+    "caddy": {},
+    "postgresql": {
+      "tag": "latest-18"
+    },
+    "sharkey": {
+      "repo": "https://activitypub.software/Sneexy/Sharkey.git",
+      "tag": "develop"
+    }
   }
 }
