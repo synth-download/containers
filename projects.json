@@ -6,6 +6,7 @@
     },
     "sharkey": {
       "repo": "https://activitypub.software/Sneexy/Sharkey.git",
+      "ref": "develop",
       "tag": "develop"
     }
   }
