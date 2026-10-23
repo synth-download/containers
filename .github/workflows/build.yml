@@ -24,6 +24,7 @@ jobs:
     runs-on: ubuntu-24.04
     outputs:
       services: ${{ steps.set-services.outputs.services }}
+      names: ${{ steps.set-services.outputs.names }}
       tags: ${{ steps.set-services.outputs.tags }}
     steps:
       - name: Checkout code
@@ -40,12 +41,12 @@ jobs:
           else
             echo "Auto-detecting projects..."
             SERVICES=$(jq -r '.projects | keys[]' projects.json | jq -R . | jq -c -s '.')
-            NAMES=$(jq -c '.projects | to_entries | map({key: .key, value: .value.name}) | from_entries' projects.json)
           fi
+          NAMES=$(jq -c '.projects | to_entries | map({key: .key, value: (.value.name // .key)}) | from_entries' projects.json)
           TAGS=$(jq -c '.projects | to_entries | map({key: .key, value: (.value.tag // "latest")}) | from_entries' projects.json)
 
           echo "services=$SERVICES" >> $GITHUB_OUTPUT
-          echo "names=$NAME" >> $GITHUB_OUTPUT
+          echo "names=$NAMES" >> $GITHUB_OUTPUT
           echo "tags=$TAGS" >> $GITHUB_OUTPUT
 
   build:
@@ -88,16 +89,16 @@ jobs:
           driver: docker-container
 
       - name: Build and push native image (per-arch)
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v6
         with:
           context: ${{ matrix.service }}
           file: ${{ matrix.service }}/Dockerfile
           platforms: linux/${{ matrix.arch }}
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${NAME}:${{ matrix.arch }}-${{ fromJson(needs.setup-services.outputs.tags)[matrix.service] }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+            ghcr.io/${{ github.repository_owner }}/${{ fromJson(needs.setup-services.outputs.names)[matrix.service] }}:${{ matrix.arch }}-${{ fromJson(needs.setup-services.outputs.tags)[matrix.service] }}
+          cache-from: type=gha,scope=${{ matrix.service }}-${{ matrix.arch }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.service }}-${{ matrix.arch }}
 
   create-manifest:
     needs: [setup-services, build]
@@ -120,8 +121,8 @@ jobs:
 
       - name: Create and push multi-arch manifest (imagetools)
         run: |
-          AMD64_TAG="ghcr.io/${{ github.repository_owner }}/${NAME}:amd64-${{ fromJson(needs.setup-services.outputs.tags)[matrix.service] }}"
-          ARM64_TAG="ghcr.io/${{ github.repository_owner }}/${NAME}:arm64-${{ fromJson(needs.setup-services.outputs.tags)[matrix.service] }}"
-          MULTI_TAG="ghcr.io/${{ github.repository_owner }}/${NAME}:${{ fromJson(needs.setup-services.outputs.tags)[matrix.service] }}"
+          AMD64_TAG="ghcr.io/${{ github.repository_owner }}/${{ fromJson(needs.setup-services.outputs.names)[matrix.service] }}:amd64-${{ fromJson(needs.setup-services.outputs.tags)[matrix.service] }}"
+          ARM64_TAG="ghcr.io/${{ github.repository_owner }}/${{ fromJson(needs.setup-services.outputs.names)[matrix.service] }}:arm64-${{ fromJson(needs.setup-services.outputs.tags)[matrix.service] }}"
+          MULTI_TAG="ghcr.io/${{ github.repository_owner }}/${{ fromJson(needs.setup-services.outputs.names)[matrix.service] }}:${{ fromJson(needs.setup-services.outputs.tags)[matrix.service] }}"
 
           docker buildx imagetools create --tag "$MULTI_TAG" "$AMD64_TAG" "$ARM64_TAG"

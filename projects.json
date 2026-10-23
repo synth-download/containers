@@ -1,17 +1,20 @@
 {
   "projects": {
-    "caddy": {
-      "name": "caddy"
-    },
+    "caddy": {},
     "postgresql": {
-      "name": "postgresql",
-      "tag": "latest-18"
+      "tag": "18"
     },
     "sharkey-develop": {
       "name": "sharkey",
       "repo": "https://activitypub.software/Sneexy/Sharkey.git",
       "ref": "develop",
       "tag": "develop"
+    },
+    "sharkey-stable": {
+      "name": "sharkey",
+      "repo": "https://activitypub.software/Sneexy/Sharkey.git",
+      "ref": "stable",
+      "tag": "latest"
     }
   }
 }

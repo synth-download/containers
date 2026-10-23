@@ -2,6 +2,7 @@
 
 # NOTE:
 # this dockerfile is copied directly from and mirrored with https://activitypub.software/Sneexy/Sharkey/-/blob/develop/Dockerfile?ref_type=heads
+# EXCEPT for line 24 (COPY ./src .), added here due to the way this repo works
 
 ARG NODE_VERSION=26-trixie-slim
 
