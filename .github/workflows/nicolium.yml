@@ -1,0 +1,62 @@
+name: build and release nicolium
+
+#on:
+#  schedule:
+#    - cron: "00 06 * * *"
+#  push:
+#  workflow_dispatch:
+
+jobs:
+  build-nicolium:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: clone nicolium
+        run: |
+          git clone https://codeberg.org/nicolium/nicolium.git ./
+
+      - name: setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: setup node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: install dependencies
+        env:
+          COREPACK_ENABLE_DOWNLOAD_PROMPT: 0
+          YARN_ENABLE_IMMUTABLE_INSTALLS: false # some weird dependency issues
+        run: |
+          pnpm install
+
+      - name: build pl-api
+        env:
+          COREPACK_ENABLE_DOWNLOAD_PROMPT: 0
+          NODE_ENV: production
+        working-directory: ./packages/pl-api
+        run: |
+          pnpm build
+
+      - name: build nicolium
+        env:
+          COREPACK_ENABLE_DOWNLOAD_PROMPT: 0
+          NODE_ENV: production
+          WITH_LANDING_PAGE: true
+          KINKY: true
+        working-directory: ./packages/nicolium
+        run: |
+          pnpm build
+
+      - name: create zip
+        working-directory: ./packages/nicolium/dist
+        run: |
+          zip -r ../../../nicolium.zip .
+
+      - name: release zip
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: nicolium
+          make_latest: true
+          files: nicolium.zip

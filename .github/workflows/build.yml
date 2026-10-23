@@ -11,6 +11,7 @@ on:
   push:
     paths-ignore:
       - "**.md"
+      - ".github/workflows/nicolium.yml"
   workflow_dispatch:
     inputs:
       services:
