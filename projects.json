@@ -4,6 +4,11 @@
     "postgresql": {
       "tag": "18"
     },
+    "knot": {
+      "repo": "https://tangled.org/did:plc:j5hmlfdrwkvtxm7cjmu7j2is",
+      "ref": "master",
+      "tag": "2"
+    },
     "sharkey-develop": {
       "name": "sharkey",
       "repo": "https://activitypub.software/Sneexy/Sharkey.git",
