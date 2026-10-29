@@ -29,7 +29,8 @@ ARG GID=1000
 RUN apk add ca-certificates curl
 RUN addgroup -g $GID knot && \
     adduser -D -u $UID -G knot -h /data knot
-RUN mkdir -p /data/repos && chown -R $UID:$GID /data
+RUN mkdir -p /data/repos && \
+    chown -R $UID:$GID /data
 COPY --from=builder /src/target/release/knot-server /usr/bin/knot-server
 COPY --from=builder /src/target/release/knot-migrate /usr/bin/knot-migrate
 
