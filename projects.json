@@ -1,5 +1,9 @@
 {
   "projects": {
+    "ask-kt": {
+      "repo": "https://git.gay/blueb/ask-kt.git",
+      "ref": "main"
+    },
     "caddy": {},
     "postgresql": {
       "tag": "18"
