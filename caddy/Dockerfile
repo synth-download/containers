@@ -2,6 +2,7 @@ FROM caddy:builder-alpine AS builder
 
 RUN xcaddy build \
     --with github.com/caddy-dns/porkbun \
+    --with github.com/mholt/caddy-ratelimit \
     --with github.com/caddyserver/replace-response
 
 FROM caddy:alpine
