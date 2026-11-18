@@ -1,0 +1,37 @@
+name: build and release chuckya-fe for iceshrimp
+
+on:
+  schedule:
+    - cron: "00 06 * * *"
+  push:
+  workflow_dispatch:
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: latest
+      - run: |
+          mkdir -p $HOME/.local/bin
+          corepack enable --install-directory $HOME/.local/bin
+
+      - name: compile masto-fe
+        run: |
+          git clone https://forged.synth.download/sd/chuckya-fe.git && chmod +x /home/runner/work/actions/actions/symlink.sh && cd chuckya-fe
+          export COREPACK_ENABLE_DOWNLOAD_PROMPT=0 && npx --yes update-browserslist-db@latest && $HOME/.local/bin/yarn && $HOME/.local/bin/yarn build:production
+          cd public && cp /home/runner/work/actions/actions/symlink.sh . && zip -r ../../chuckya-fe.zip .
+
+      - name: release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: fedi-frontends
+          make_latest: true
+          files: chuckya-fe.zip
