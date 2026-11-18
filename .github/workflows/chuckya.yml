@@ -1,4 +1,4 @@
-name: build and release chuckya-fe for iceshrimp
+name: build and release chuckya-fe
 
 on:
   schedule:
@@ -7,16 +7,18 @@ on:
   workflow_dispatch:
 
 jobs:
-  tag:
+  build-chuckya:
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - name: checkout
+        uses: actions/checkout@v4
         with:
           ref: main
 
-      - uses: actions/setup-node@v4
+      - name: set up node
+        uses: actions/setup-node@v4
         with:
           node-version: latest
       - run: |
@@ -29,7 +31,7 @@ jobs:
           export COREPACK_ENABLE_DOWNLOAD_PROMPT=0 && npx --yes update-browserslist-db@latest && $HOME/.local/bin/yarn && $HOME/.local/bin/yarn build:production
           cd public && cp /home/runner/work/actions/actions/symlink.sh . && zip -r ../../chuckya-fe.zip .
 
-      - name: release
+      - name: release zip
         uses: softprops/action-gh-release@v2
         with:
           tag_name: fedi-frontends
