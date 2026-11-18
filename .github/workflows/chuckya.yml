@@ -21,15 +21,17 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: latest
-      - run: |
+
+      - name: enable corepack
+        run: |
           mkdir -p $HOME/.local/bin
           corepack enable --install-directory $HOME/.local/bin
 
       - name: compile masto-fe
         run: |
-          git clone https://forged.synth.download/sd/chuckya-fe.git && chmod +x /home/runner/work/actions/actions/symlink.sh && cd chuckya-fe
+          git clone https://forged.synth.download/sd/chuckya-fe.git && chmod +x ${GITHUB_WORKSPACE}/symlink.sh && cd chuckya-fe
           export COREPACK_ENABLE_DOWNLOAD_PROMPT=0 && npx --yes update-browserslist-db@latest && $HOME/.local/bin/yarn && $HOME/.local/bin/yarn build:production
-          cd public && cp /home/runner/work/actions/actions/symlink.sh . && zip -r ../../chuckya-fe.zip .
+          cd public && cp ${GITHUB_WORKSPACE}/symlink.sh . && zip -r ${GITHUB_WORKSPACE}/chuckya-fe.zip .
 
       - name: release zip
         uses: softprops/action-gh-release@v2
