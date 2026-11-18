@@ -1,10 +1,10 @@
 name: build and release nicolium
 
-#on:
+on:
 #  schedule:
 #    - cron: "00 06 * * *"
 #  push:
-#  workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
   build-nicolium:
