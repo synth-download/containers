@@ -10,19 +10,18 @@ ARG IMAGE=alpine-wasm
 
 FROM --platform=$BUILDPLATFORM iceshrimp.dev/iceshrimp/dotnet-sdk:11.0-$IMAGE AS builder
 WORKDIR /src
-COPY ./src .
 ARG BUILDPLATFORM
 ARG AOT=true
 
 # copy csproj files & nuget config, then restore as distinct layers
-COPY NuGet.Config /src
-COPY Iceshrimp.Backend/*.csproj /src/Iceshrimp.Backend/
-COPY Iceshrimp.Parsing/*.csproj /src/Iceshrimp.Parsing/
-COPY Iceshrimp.Frontend/*.csproj /src/Iceshrimp.Frontend/
-COPY Iceshrimp.Shared/*.csproj /src/Iceshrimp.Shared/
-COPY Iceshrimp.Build/*.csproj /src/Iceshrimp.Build/
-COPY Iceshrimp.Build/*.props /src/Iceshrimp.Build/
-COPY Directory.Build.props /src/Directory.Build.props
+COPY ./src/NuGet.Config /src
+COPY ./src/Iceshrimp.Backend/*.csproj /src/Iceshrimp.Backend/
+COPY ./src/Iceshrimp.Parsing/*.csproj /src/Iceshrimp.Parsing/
+COPY ./src/Iceshrimp.Frontend/*.csproj /src/Iceshrimp.Frontend/
+COPY ./src/Iceshrimp.Shared/*.csproj /src/Iceshrimp.Shared/
+COPY ./src/Iceshrimp.Build/*.csproj /src/Iceshrimp.Build/
+COPY ./src/Iceshrimp.Build/*.props /src/Iceshrimp.Build/
+COPY ./src/Directory.Build.props /src/Directory.Build.props
 
 WORKDIR /src/Iceshrimp.Backend
 ARG VIPS=true
@@ -30,16 +29,16 @@ RUN --mount=type=cache,target=/root/.nuget \
     dotnet restore -p:Configuration=Release -p:BundleNativeDeps=$VIPS -p:EnableLibVips=$VIPS
 
 # copy build files
-COPY Iceshrimp.Backend/ /src/Iceshrimp.Backend/
-COPY Iceshrimp.Parsing/ /src/Iceshrimp.Parsing/
-COPY Iceshrimp.Frontend/ /src/Iceshrimp.Frontend/
-COPY Iceshrimp.Shared/ /src/Iceshrimp.Shared/
-COPY Iceshrimp.Build/ /src/Iceshrimp.Build/
+COPY ./src/Iceshrimp.Backend/ /src/Iceshrimp.Backend/
+COPY ./src/Iceshrimp.Parsing/ /src/Iceshrimp.Parsing/
+COPY ./src/Iceshrimp.Frontend/ /src/Iceshrimp.Frontend/
+COPY ./src/Iceshrimp.Shared/ /src/Iceshrimp.Shared/
+COPY ./src/Iceshrimp.Build/ /src/Iceshrimp.Build/
 
 # copy files required for sourcelink
-COPY .git/HEAD /src/.git/HEAD
-COPY .git/config /src/.git/config
-COPY .git/refs/heads/ /src/.git/refs/heads/
+COPY ./src/.git/HEAD /src/.git/HEAD
+COPY ./src/.git/config /src/.git/config
+COPY ./src/.git/refs/heads/ /src/.git/refs/heads/
 RUN mkdir -p /src/.git/objects
 
 # build without architecture set, allowing for reuse of the majority of the compiled IL between architectures
