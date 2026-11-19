@@ -5,6 +5,11 @@
       "ref": "main"
     },
     "caddy": {},
+    "iceshrimp.net": {
+      "repo": "https://iceshrimp.dev/notfire/Iceshrimp.NET.git",
+      "ref": "pag-emoji-mgmt",
+      "tag": "dev"
+    },
     "postgresql": {
       "tag": "18"
     },
