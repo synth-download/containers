@@ -9,9 +9,8 @@ ARG AOT=true
 ARG IMAGE=alpine-wasm
 
 FROM --platform=$BUILDPLATFORM iceshrimp.dev/iceshrimp/dotnet-sdk:11.0-$IMAGE AS builder
-COPY /src .
-RUN rm -r /src
 WORKDIR /src
+COPY ./src .
 ARG BUILDPLATFORM
 ARG AOT=true
 
