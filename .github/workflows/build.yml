@@ -53,6 +53,7 @@ jobs:
   build:
     needs: setup-services
     runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
+    continue-on-error: ${{ matrix.experimental == true }}
     strategy:
       matrix:
         service: ${{ fromJson(needs.setup-services.outputs.services) }}
